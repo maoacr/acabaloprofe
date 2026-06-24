@@ -3,18 +3,18 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Acabalo Juez',
-    template: '%s · Acabalo Juez',
+    default: 'Acabalo Profe',
+    template: '%s · Acabalo Profe',
   },
   description:
     'Plataforma de predicciones futboleras — compite con amigos pronosticando marcadores. Gratis, sin apuestas, puro fútbol.',
-  applicationName: 'Acabalo Juez',
+  applicationName: 'Acabalo Profe',
   keywords: ['polla futbolera', 'predicciones', 'fútbol', 'mundial', 'copa américa'],
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Acabalo Juez',
+    title: 'Acabalo Profe',
   },
   formatDetection: {
     telephone: false,

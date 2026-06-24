@@ -4,7 +4,7 @@ export default function HomePage() {
       <div className="w-full max-w-md space-y-8 text-center">
         <div className="space-y-2">
           <h1 className="text-5xl font-bold tracking-tight">
-            Acabalo <span className="text-brand-500">Juez</span>
+            Acabalo <span className="text-brand-500">Profe</span>
           </h1>
           <p className="text-lg text-muted-foreground">
             La polla futbolera de tu grupo

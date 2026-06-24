@@ -1,4 +1,4 @@
-# Skill Registry — acabalojuez.com
+# Skill Registry — acabaloprofe
 
 > Auto-resolved compact rules for sub-agents working on this project.
 > This file is the source of truth for project standards. Sub-agents receive

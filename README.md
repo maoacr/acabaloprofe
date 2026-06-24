@@ -1,4 +1,4 @@
-# Acabalo Juez
+# Acabalo Profe
 
 Plataforma de predicciones futboleras — entretenimiento sin dinero real.
 
@@ -11,7 +11,7 @@ Plataforma de predicciones futboleras — entretenimiento sin dinero real.
 - **Emails**: Resend
 - **Resultados**: API-Football o football-data.org
 - **PWA**: next-pwa + Web Push
-- **Testing**: Vitest + React Testing Library + Playwright (próximamente)
+- **Testing**: Vitest + React Testing Library + Playwright
 
 ## Desarrollo
 
@@ -24,19 +24,33 @@ pnpm test           # Tests unitarios
 pnpm test:e2e       # Tests E2E
 ```
 
+## Setup local
+
+1. Crear proyecto en [supabase.com](https://supabase.com) (free tier)
+2. Copiar `.env.example` → `.env.local` y completar las 3 keys de Supabase
+3. `pnpm install`
+4. `pnpm supabase link --project-ref <tu-ref>`
+5. `pnpm supabase db push` (aplica migrations + seed)
+6. `pnpm dev`
+
+⚠️ **Nunca** commitees `.env.local` ni pegues keys en chats o PRs.
+
 ## Estructura
 
 ```
 src/
 ├── app/              # Next.js App Router (rutas, layouts, páginas)
-├── components/       # Componentes UI reutilizables
-├── lib/              # Utilidades y helpers
-└── ...
+├── domain/           # Lógica de negocio pura (scoring, types, lock)
+├── application/      # Use cases y Server Actions
+├── infrastructure/   # Clientes Supabase, env, helpers de tiempo
+├── interface/        # Componentes React, hooks, providers
+└── lib/              # Utilidades compartidas
 ```
 
 ## Estado del proyecto
 
-🚧 **Fase 0 — Bootstrap completo.** Estructura Next.js + Tailwind + TypeScript lista. Pendiente: SDD workflow (proposal → spec → design → tasks → apply) para implementar features.
+🚧 **MVP en construcción.** PR1 (Foundation) completado: tooling + domain + scoring.
+Ver `openspec/changes/acabaloprofe-mvp/` para el plan completo.
 
 ## Licencia
 
