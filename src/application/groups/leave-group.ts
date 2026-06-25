@@ -1,3 +1,5 @@
+'use server';
+
 import { createClient } from '@/infrastructure/supabase/server';
 import type { ActionResult } from '@/domain/types';
 import { leaveGroupSchema } from '@/lib/groups/zod-schemas';

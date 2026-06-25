@@ -1,3 +1,5 @@
+'use server';
+
 import { createClient } from '@/infrastructure/supabase/server';
 import { env } from '@/infrastructure/env';
 import type { ActionResult } from '@/domain/types';

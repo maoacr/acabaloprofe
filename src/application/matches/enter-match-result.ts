@@ -1,3 +1,5 @@
+'use server';
+
 import { createClient } from '@/infrastructure/supabase/server';
 import type { ActionResult } from '@/domain/types';
 import { enterMatchResultSchema, type EnterMatchResultInput } from '@/lib/matches/zod-schemas';
