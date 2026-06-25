@@ -98,9 +98,11 @@ CREATE INDEX idx_teams_group ON public.teams(tournament_id, group_name);
 -- =============================================================================
 -- matches
 -- =============================================================================
--- The lock_at column is GENERATED from scheduled_at - 10 minutes.
--- This guarantees the lock window is enforced at the DB level, not just
--- in application code (defense in depth).
+-- The lock_at column is computed via a BEFORE INSERT trigger from
+-- scheduled_at - 10 minutes. We can't use a GENERATED column because
+-- Postgres rejects TIMESTAMPTZ - INTERVAL as non-immutable (SQLSTATE 42P17).
+-- The trigger preserves the same invariant: lock_at always reflects
+-- scheduled_at - 10 minutes for any new row.
 
 CREATE TABLE public.matches (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -109,7 +111,7 @@ CREATE TABLE public.matches (
   home_team_id UUID NOT NULL REFERENCES public.teams(id),
   away_team_id UUID NOT NULL REFERENCES public.teams(id),
   scheduled_at TIMESTAMPTZ NOT NULL,
-  lock_at TIMESTAMPTZ GENERATED ALWAYS AS (scheduled_at - INTERVAL '10 minutes') STORED,
+  lock_at TIMESTAMPTZ NOT NULL,
   status TEXT NOT NULL DEFAULT 'scheduled'
     CHECK (status IN ('scheduled', 'live', 'finished', 'cancelled')),
   home_goals INTEGER CHECK (home_goals BETWEEN 0 AND 20),
@@ -124,6 +126,25 @@ CREATE INDEX idx_matches_tournament ON public.matches(tournament_id);
 CREATE INDEX idx_matches_phase ON public.matches(phase_id, scheduled_at);
 CREATE INDEX idx_matches_scheduled ON public.matches(scheduled_at) WHERE status = 'scheduled';
 CREATE INDEX idx_matches_lock_pending ON public.matches(lock_at) WHERE status = 'scheduled';
+
+-- Trigger to set lock_at = scheduled_at - 10 minutes on every insert.
+-- We use a function so the same logic can be reused if needed.
+CREATE OR REPLACE FUNCTION public.set_match_lock_at()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF NEW.lock_at IS NULL THEN
+    NEW.lock_at := NEW.scheduled_at - INTERVAL '10 minutes';
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_matches_set_lock_at
+  BEFORE INSERT ON public.matches
+  FOR EACH ROW
+  EXECUTE FUNCTION public.set_match_lock_at();
 
 -- =============================================================================
 -- groups (pollas)
