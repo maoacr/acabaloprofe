@@ -46,7 +46,6 @@ export async function updateSession(request: NextRequest) {
   );
 
   // IMPORTANT: This refreshes the session. Do not remove.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data: { user } } = await supabase.auth.getUser();
 
   return { response, user, supabase };
