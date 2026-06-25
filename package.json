@@ -13,7 +13,10 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "db:link": "supabase link",
+    "db:push": "supabase db push",
+    "db:reset": "supabase db reset"
   },
   "dependencies": {
     "@hookform/resolvers": "3.9.0",
@@ -48,6 +51,7 @@
     "postcss": "8.4.47",
     "prettier": "3.3.3",
     "prettier-plugin-tailwindcss": "0.6.8",
+    "supabase": "^1.226.4",
     "tailwindcss": "3.4.13",
     "typescript": "5.6.2",
     "vitest": "^2.1.2"

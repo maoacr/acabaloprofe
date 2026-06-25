@@ -1,0 +1,6 @@
+# Supabase local artifacts
+supabase/.branches/
+supabase/.temp/
+
+# Local Supabase stack (Docker)
+.supabase/
