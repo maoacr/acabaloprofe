@@ -52,3 +52,7 @@ public/workbox-*.js.map
 
 # Engram / local data
 .engram/
+
+# Supabase CLI temp
+supabase/.temp/
+supabase/.branches/
