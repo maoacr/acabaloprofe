@@ -2,7 +2,10 @@ import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/infrastructure/supabase/server';
 import { getGroup } from '@/application/groups/get-group';
+import { getGroupLeaderboard } from '@/application/leaderboard/get-group-leaderboard';
 import { PHASE_CODE_DESCRIPTIONS } from '@/lib/constants';
+import { LeaderboardTable } from '@/components/leaderboard/LeaderboardTable';
+import { Podium } from '@/components/leaderboard/Podium';
 import type { StartingPhaseCode } from '@/domain/types';
 
 export const metadata = { title: 'Grupo' };
@@ -14,12 +17,19 @@ export default async function GroupHomePage({ params }: { params: { id: string }
   } = await supabase.auth.getUser();
   if (!user) redirect(`/login?redirect=/grupos/${params.id}`);
 
-  const group = await getGroup(params.id, user.id);
+  const [group, leaderboard] = await Promise.all([
+    getGroup(params.id, user.id),
+    getGroupLeaderboard(params.id),
+  ]);
+
   if (!group) notFound();
 
   if (!group.isCurrentUserMember && !group.isCurrentUserAdmin) {
     redirect(`/unirse/${(group as { short_code?: string }).short_code ?? ''}`);
   }
+
+  const top3 = leaderboard.slice(0, 3);
+  const hasScores = leaderboard.some((e) => e.totalPoints > 0);
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6">
@@ -47,32 +57,13 @@ export default async function GroupHomePage({ params }: { params: { id: string }
         )}
       </div>
 
-      {group.participants.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-          Todavía no hay participantes.
-        </p>
-      ) : (
-        <ol className="space-y-2">
-          {group.participants
-            .filter((p) => p.status === 'active')
-            .map((p) => (
-              <li
-                key={p.id}
-                className={`flex items-center justify-between rounded-xl border border-border bg-card p-3 ${
-                  p.userId === user.id ? 'ring-2 ring-brand-500' : ''
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="w-8 text-center text-lg font-bold text-muted-foreground">
-                    {p.position || '—'}
-                  </span>
-                  <span className="font-medium">{p.username}</span>
-                </div>
-                <span className="text-base font-semibold text-brand-600">{p.totalPoints} pts</span>
-              </li>
-            ))}
-        </ol>
+      {hasScores && top3.length >= 3 && (
+        <div className="mb-6 rounded-2xl border border-border bg-card p-4">
+          <Podium top3={top3} />
+        </div>
       )}
+
+      <LeaderboardTable entries={leaderboard} currentUserId={user.id} />
 
       <div className="mt-6 flex gap-2">
         <Link
